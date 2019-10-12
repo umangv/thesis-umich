@@ -46,6 +46,9 @@
 %%                                  in-dissertation abstract and
 %%                                  abstract that prints at the end.
 %%  2011.04.09 @Derek Dalle       : Convert rac.sty --> thesis.umich.cls
+%%  2019.08.30 @Umang Varma       : Remove various code that can be found
+%%                                  in widely available packages. Address
+%%                                  changes in Rackham guidelines.
 %%
 
 %% ---- HEADERS --------------------------------------------------------
@@ -53,7 +56,7 @@
 \NeedsTeXFormat{LaTeX2e}
 
 % This command gives the name of the class.
-\ProvidesClass{thesis-umich}[2011/04/09 Thesis template]
+\ProvidesClass{thesis-umich}[UMich Thesis template]
 
 %% ---- OPTIONS PROCESSING ---------------------------------------------
 % Define three switches for the the thesis format types.
@@ -65,7 +68,6 @@
 \newif\if@umich@listoftables
 \newif\if@umich@listofmaps
 \newif\if@umich@listofillustrations
-\newif\if@umich@listofprograms
 \newif\if@umich@listofappendices
 \newif\if@umich@listofabbrevs
 \newif\if@umich@listofsymbols
@@ -85,19 +87,12 @@
 \@umich@listoftablestrue
 \@umich@copyrighttrue
 
-% This declares a variable for using an index.
-% An index is not allowed in dissertations.
-\newif\if@umich@index
-
 % This makes an option for bibliography backrefs.
 \newif\if@umich@backref
 
 % Declare options for the overall layout.
 \DeclareOption{thesis}{\@umich@thesistrue\@umich@reportfalse}
 \DeclareOption{report}{\@umich@reporttrue\@umich@thesisfalse}
-
-% Declare an option for the index.
-\DeclareOption{index}{\@umich@indextrue}
 
 % Declare an option for bibliography backrefs.
 \DeclareOption{backref}{\@umich@backreftrue}
@@ -120,11 +115,6 @@
  \LoadClass[letterpaper,12pt,oneside]{report}
 \fi
 
-% Make sure the index is off for 'thesis'.
-\if@umich@thesis
- \@umich@indexfalse
-\fi
-
 
 %% ---- PACKAGE LOADING ------------------------------------------------
 % This class uses the geometry.sty package to set the margins.
@@ -136,7 +126,7 @@
  \setlength{\columnsep}{0.3in}
 \else
  % Use the standard margins for the thesis version.
- \RequirePackage[margin=1in,left=1.5in, %
+ \RequirePackage[margin=1in,left=1in, %
   headheight=0.5\baselineskip]{geometry}
 \fi
 
@@ -149,7 +139,7 @@
 \RequirePackage{graphicx}
 
 % This is useful for complex figures.
-\RequirePackage{subfigure}
+\RequirePackage{subcaption}
 
 % This changes the font.
 \RequirePackage{times}
@@ -166,7 +156,7 @@
 % This package is used to set line spacing.
 \RequirePackage{setspace}
 
-% This package allows conditional testing of varibles.
+% This package allows conditional testing of variables.
 \RequirePackage{ifthen}
 
 % This package is used for silly letter spacing
@@ -178,12 +168,6 @@
 % This package is used for the list of abbreviations
 \RequirePackage[printonlyused]{acronym}
 
-% This package is for the index, if it is to be used.
-\if@umich@index
- \RequirePackage{makeidx}
- \makeindex
-\fi
-
 % This is the package for special headers and footers.
 \RequirePackage{fancyhdr}
 
@@ -192,6 +176,12 @@
 \if@umich@report
  \RequirePackage{multicol}
 \fi
+
+% indent first paragraphs
+\RequirePackage{indentfirst}
+
+% subtle corrections to white space that make the document much easier to read
+\RequirePackage{microtype}
 
 
 %% ---- FORMATTING -----------------------------------------------------
@@ -267,20 +257,20 @@
 % The fields to be used for the title page
 \renewcommand{\@title}{Insert a Title!}
 \renewcommand{\@author}{Insert an Author!}
+\newcommand{\@orcidid}{Insert an ORCIDiD (like 9999-9999-9999-9999)}
+\newcommand{\@authoremail}{Insert an Author Email!}
 \newcommand{\@degree}{Doctor of Philosophy}
 \newcommand{\@department}{Insert a Department Name!}
 \newcommand{\@committee}{Insert a Committee!}
-\newcommand{\@chair}{Insert a Chair!}
-\newcommand{\@cochair}{}
 
 % Commands to set the titlepage fields
 \renewcommand{\title}[1]{\renewcommand{\@title}{#1}}
 \renewcommand{\author}[1]{\renewcommand{\@author}{#1}}
+\newcommand{\orcidid}[1]{\renewcommand{\@orcidid}{#1}}
+\newcommand{\authoremail}[1]{\renewcommand{\@authoremail}{#1}}
 \newcommand{\degree}[1]{\renewcommand{\@degree}{#1}}
 \newcommand{\department}[1]{\renewcommand{\@department}{#1}}
 \newcommand{\committee}[1]{\renewcommand{\@committee}{#1}}
-\newcommand{\chair}[1]{\renewcommand{\@chair}{#1}}
-\newcommand{\cochair}[1]{\renewcommand{\@cochair}{#1}}
 
 % Commands for the user to be able to use the defined fields.
 \newcommand{\inserttitle}{\@title}
@@ -288,8 +278,6 @@
 \newcommand{\insertdegree}{\@degree}
 \newcommand{\insertdepartment}{\@department}
 \newcommand{\insertcommittee}{\@committee}
-\newcommand{\insertchair}{\@chair}
-\newcommand{\insertcochair}{\@cochair}
 \newcommand{\insertyear}{\number\year}
 
 % This redefines the title page to automatically have all of the
@@ -300,13 +288,13 @@
  % Use single-spaced lines for the title page.
  \begin{singlespace} %
   % Move down the page slightly.
-  \hbox{\vspace{0.3in}} %
+  \hbox{\vspace{1.1in}} %
   % Center the title page as well.
   \begin{center} %
    % Put the title itself in 1.5-spaced format.
    \begin{onehalfspacing}
     % Insert the title.
-    {\Large\bfseries\inserttitle} %
+    {\large\bfseries\inserttitle} %
    \end{onehalfspacing} \\[4ex] %
    % Vertical rubber space
 %   \vfill %
@@ -332,9 +320,9 @@
   % Non-justified content
   \begin{flushleft}
    % Heading for the committee
-   \hspace{1in}Doctoral Committee: \\[2ex] %
+   Doctoral Committee: \\[2ex] %
    % Horizontal spacing
-   \hspace{1.5in} %
+   \hspace{0.5in} %
    % Insert the committee (in a box).
    \parbox{4.2in}{\insertcommittee}
   \end{flushleft} %
@@ -390,10 +378,13 @@
  \begin{center} %
   % Vertical rubber space
   \ \vfill %
-  % Insert the frontispiece.
-  \copyright \insertcopyrightholder \\[1ex] %
-  % Horizontal line
-  \rule[0.5ex]{5in}{1pt} \\[1ex] %
+  % Insert the copyright information.
+  \doublespacing %
+  \insertcopyrightholder\\
+  \@authoremail\\
+  ORCID iD:  \@orcidid\\
+  \ \\
+  \copyright\ \insertcopyrightholder \ 
   % The year of publication
   \number\year %
   % Vertical rubber space
@@ -413,159 +404,34 @@
 
 % Command to insert front page matter with styles
 \newcommand{\insertfront}[4]{ %
- % Check the value of the style.
- \ifthenelse{\equal{#2}{1}}{ %
-  % Style 1: plain text
-  % Vertical rubber space
-  \vspace*{\stretch{1}} %
+  \begin{minipage}{0.8\textwidth} \vspace{1in} \end{minipage} \\ %
+  \edef\outsideindent{\the\parindent}% store parindent value
   % Center on the page.
   \begin{center} %
    % Make a minipage.
    \begin{minipage}{#4\textwidth} %
+    \setlength{\parindent}{\outsideindent}
     % Required to use 1.5-spacing for dissertation.
     \if@umich@thesis %
      \onehalfspacing %
     \fi %
-    % Insert the text.
-    \sloppy #1 %
+    % Check the value of the style.
+    \ifthenelse{\equal{#2}{2}}{ %
+     % Style 2: simple bold italic heading
+     % Larger upper margin for first page of front matter
+     \begin{center}\textbf{\textit{#3}}\end{center} %
+    }{ %
+    \ifthenelse{\equal{#2}{3}}{ %
+     % Style 3: Spread caps heading
+    % Larger upper margin for first page of front matter
+       % Heading
+       \begin{center} \textbf{\uppercase{#3}} \end{center} %
+    }{}    % Insert the text.
+    }
+
+    #1 %
    \end{minipage} %
   \end{center} %
-  % Vertical rubber space
-  \vspace*{\stretch{2}} %
- }{ %
- \ifthenelse{\equal{#2}{2}}{ %
-  % Style 2: simple bold italic heading
-  % Vertical rubber space
-  \vspace*{\stretch{1}} %
-  % Center on the page.
-  \begin{center} %
-   % Make a minipage.
-   \begin{minipage}{#4\textwidth} %
-    % Required to use 1.5-spacing for dissertation.
-    \if@umich@thesis %
-     \onehalfspacing %
-    \fi %
-    % Heading
-    \begin{center}\textbf{\textit{#3}}\end{center} %
-    % Insert the text.
-    \sloppy #1 %
-   \end{minipage} %
-  \end{center} %
-  % Vertical rubber space
-  \vspace*{\stretch{2}} %
- }{ %
- \ifthenelse{\equal{#2}{3}}{ %
-  % Style 3: Spread caps heading
-  % Vertical rubber space
-  \vspace*{\stretch{1}} %
-  % Center on the page.
-  \begin{center} %
-   % Make a minipage.
-   \begin{minipage}{#4\textwidth} %
-    % Required to use 1.5-spacing for dissertation.
-    \if@umich@thesis %
-     \onehalfspacing %
-    \fi %
-    % Heading
-    \begin{center} \textbf{\uppercase{\an{#3}}} \end{center} %
-    % Insert the text.
-    \sloppy #1 %
-   \end{minipage} %
-  \end{center} %
-  % Vertical rubber space
-  \vspace*{\stretch{2}} %
- }{ %
- \ifthenelse{\equal{#2}{4}}{ %
-  % Style 4: lined
-  % Vertical rubber space
-  \vspace*{\stretch{1}} %
-  % Center on the page.
-  \begin{center} %
-   % Make a minipage.
-   \begin{minipage}{#4\textwidth}
-    % Line above
-    \rule[1.4ex]{\textwidth}{1pt} %
-    % Required to use 1.5-spacing for dissertation.
-    \if@umich@thesis %
-     \onehalfspacing %
-    \fi %
-    % Insert the text.
-    \sloppy #1 \\ %
-    % Line below
-    \rule{\textwidth}{1pt} %
-   \end{minipage} %
-  \end{center} %
-  % Vertical rubber space
-  \vspace*{\stretch{2}} %
- }{ %
- \ifthenelse{\equal{#2}{5}}{ %
-  % Style 5: bold italic heading with lines
-  % Vertical rubber space
-  \vspace*{\stretch{1}} %
-  % Center on the page.
-  \begin{center} %
-    % Make a minipage.
-   \begin{minipage}{#4\textwidth}
-    % Heading
-    \begin{center} \textbf{\textit{#3}} \end{center} %
-    % Move up a bit.
-    \ \\[-4ex] %
-    % Line above
-    \rule[1.4ex]{\textwidth}{1pt} %
-    % Required to use 1.5-spacing for dissertation.
-    \if@umich@thesis %
-     \onehalfspacing %
-    \fi %
-    % Insert the text.
-    \sloppy #1 \\ %
-    % Line below
-    \rule{\textwidth}{1pt} %
-   \end{minipage} %
-  \end{center} %
-  % Vertical rubber space
-  \vspace*{\stretch{2}} %
- }{ %
- \ifthenelse{\equal{#2}{6}}{ %
-  % Style 6: lined with spread caps header
-  % Vertical rubber space
-  \vspace*{\stretch{1}} %
-  % Center on the page.
-  \begin{center} %
-    % Make a minipage.
-   \begin{minipage}{#4\textwidth}
-    % Heading
-    \begin{center} \textbf{\uppercase{\an{#3}}} \end{center} %
-    % Move up a bit.
-    \ \\[-4ex] %
-    % Line above
-    \rule[1.4ex]{\textwidth}{1pt} %
-    % Required to use 1.5-spacing for dissertation.
-    \if@umich@thesis %
-     \onehalfspacing %
-    \fi %
-    % Insert the text.
-    \sloppy #1 \\ %
-    % Line below
-    \rule{\textwidth}{1pt} %
-   \end{minipage} %
-  \end{center} %
-  % Vertical rubber space
-  \vspace*{\stretch{2}} %
- }{ %
-  % Default style: centered
-  % Vertical rubber space
-  \vspace*{\stretch{1}} %
-  % Center on the page.
-  \begin{center} %
-   % Make a minipage.
-   \begin{minipage}{0.7\textwidth} %
-    % Insert the text.
-    \begin{center} \sloppy #1 \end{center} %
-   \end{minipage} %
- \end{center} %
-  % Vertical rubber space
-  \vspace*{\stretch{1}} %
- }}}}}} %
 }
 
 %% ---- COMMANDS TO HIDE/SHOW FRONT PAGES ------------------------------
@@ -594,7 +460,7 @@
 % Command that sets the dedication style
 \newcommand{\@dedicationstyle}{\@frontpagestyle}
 % Command that sets the width of the dedication text area
-\newcommand{\@dedication@width}{0.66}
+\newcommand{\@dedication@width}{1}
 
 % Command to change it from the default
 \newcommand{\dedication}[2][]{ %
@@ -630,7 +496,7 @@
 % Command that sets the acknowledgments style
 \newcommand{\@acknowledgmentsstyle}{\@frontpagestyle}
 % Command that sets the width of the acknowledgments text area
-\newcommand{\@acknowledgments@width}{0.66}
+\newcommand{\@acknowledgments@width}{1}
 
 % Command to change it from the default
 \newcommand{\acknowledgments}[2][]{ %
@@ -669,7 +535,7 @@
 % Command that sets the preface style
 \newcommand{\@prefacestyle}{\@frontpagestyle}
 % Command that sets the width of the preface text area
-\newcommand{\@preface@width}{0.75}
+\newcommand{\@preface@width}{1}
 
 % Command to change it from the default
 \newcommand{\preface}[2][]{ %
@@ -708,7 +574,7 @@
 % Command that sets the foreword style
 \newcommand{\@forewordstyle}{\@frontpagestyle}
 % Command that sets the width of the foreword text area
-\newcommand{\@foreword@width}{0.66}
+\newcommand{\@foreword@width}{1}
 
 % Command to change it from the default
 \newcommand{\foreword}[2][]{ %
@@ -747,7 +613,7 @@
 % Command that sets the prologue style
 \newcommand{\@prologuestyle}{\@frontpagestyle}
 % Command that sets the width of the prologue text area
-\newcommand{\@prologue@width}{0.75}
+\newcommand{\@prologue@width}{1}
 
 % Command to change it from the default
 \newcommand{\prologue}[2][]{ %
@@ -785,23 +651,21 @@
 \newcommand{\showlistoffigures}{\@umich@listoffigurestrue}
 \newcommand{\showlistoftables}{\@umich@listoftablestrue}
 \newcommand{\showlistofmaps}{\@umich@listofmapstrue}
-\newcommand{\showlistofillustrations}{\@umich@listillustrationstrue}
-\newcommand{\showlistofprograms}{\@umich@listofprogramstrue}
+\newcommand{\showlistofillustrations}{\@umich@listofillustrationstrue}
 \newcommand{\showlistofappendices}{\@umich@listofappendicestrue}
 \newcommand{\showlistofabbreviations}{\@umich@listofabbrevstrue}
 \newcommand{\showlistofacronyms}{\@umich@listofacronymstrue}
-\newcommand{\showlistofsymbos}{\@umich@listofsymbolstrue}
+\newcommand{\showlistofsymbols}{\@umich@listofsymbolstrue}
 
 % Commands to hide each of the lists
 \newcommand{\hidelistoffigures}{\@umich@listoffiguresfalse}
 \newcommand{\hidelistoftables}{\@umich@listoftablesfalse}
 \newcommand{\hidelistofmaps}{\@umich@listofmapsfalse}
-\newcommand{\hidelistofillustrations}{\@umich@listillustrationsfalse}
-\newcommand{\hidelistofprograms}{\@umich@listofprogramsfalse}
+\newcommand{\hidelistofillustrations}{\@umich@listofillustrationsfalse}
 \newcommand{\hidelistofappendices}{\@umich@listofappendicesfalse}
 \newcommand{\hidelistofabbreviations}{\@umich@listofabbrevsfalse}
 \newcommand{\hidelistofacronyms}{\@umich@listofacronymsfalse}
-\newcommand{\hidelistofsymbos}{\@umich@listofsymbolsfalse}
+\newcommand{\hidelistofsymbols}{\@umich@listofsymbolsfalse}
 
 
 %% ---- TABLE OF CONTENTS ----------------------------------------------
@@ -868,10 +732,12 @@
   \begin{minipage}{0.8\textwidth} \vspace{1in} \end{minipage} \\ %
  \fi %
  % Add the title
- \centerline{\large\bf LIST OF FIGURES} %
+ \centerline{\large\bf LIST OF FIGURES}
  % Add some space after the title.
- \vspace{1ex} %
+ \vspace{2em} %
+ \ \\
  % Start the automatic table of contents features.
+ \noindent FIGURE
  \begin{singlespace} %
   \@starttoc{lof}\if@restonecol\twocolumn\fi %
  \end{singlespace} %
@@ -897,8 +763,10 @@
  % Add the title
  \centerline{\large\bf LIST OF TABLES} %
  % Add some space after the title.
- \vspace{1ex} %
+ \vspace{2em} %
+ \ \\
  % Start the automatic table of contents features.
+ \noindent TABLE
  \begin{singlespace} %
   \@starttoc{lot}\if@restonecol\twocolumn\fi %
  \end{singlespace} %
@@ -968,39 +836,6 @@
  \end{singlespace} %
 }
 
-
-%% ---- LIST OF PROGRAMS -----------------------------------------------
-% Command to generate the 'map' environment.
-\newfloat{program}{tbp}{lop}[chapter]
-% Use a capitalized version for the captions.
-\floatname{program}{Program}
-
-% This sets the formatting for map entries in the list of maps.
-\newcommand*{\l@program}{\@dottedtocline{1}{0em}{2.5em}}
-
-% This sets the formatting of the list of maps page.
-\newcommand*{\listofprograms}{%
- % Move to new page.
- \newpage %
- % Add this page to the table of contents.
- \phantomsection\addcontentsline{toc}{chapter}{List of Programs} %
- % Anchor for pdf
- \phantomsection %
- % Use front page styling.
- \frntpg %
- % Larger upper margin for first page of table (thesis only)
- \if@umich@thesis %
-  \begin{minipage}{0.8\textwidth} \vspace{1in} \end{minipage} \\ %
- \fi %
- % Add the title
- \centerline{\large\bf LIST OF PROGRAMS} %
- % Add some space after the title.
- \vspace{1ex} %
- % Start the automatic table of contents features.
- \begin{singlespace} %
-  \@starttoc{lop}\if@restonecol\twocolumn\fi %
- \end{singlespace} %
-}
 
 
 %% ---- LIST OF APPENDICES ---------------------------------------------
@@ -1241,37 +1076,17 @@
  % Center the title area.
  \begin{center} %
   % Formatting
-  \large \bfseries
+  \bfseries
   % Add the heading.
   ABSTRACT \\[5ex] %
   % Add the title of the dissertation.
   \normalsize %
-  \inserttitle \\[2ex] %
-  % Add the word 'by'
-  by \\[2ex]
-  % Add the author.
-  \insertauthor
  \end{center} %
- % Vertical rubber space
- \vspace*{\stretch{2}} %
- % Insert the chair info
- \ifthenelse{\equal{\@cochair}{}}{
-  % No co-chairs; insert the chair.
-  {\bf Chair: \insertchair} %
- }{ %
-  % Use co-chairs.
-  {\bf Co-Chairs: \insertcochairs}} %
- % Vertical rubber space
- \vspace*{\stretch{2}} %
- % Insert the text in a centered minipage.
- \begin{center} %
-  \begin{minipage}{0.9\textwidth} %
-   % Double-spaced lines required by Rackham
-   \doublespacing %
+
+  % Use 1.5 spacing
+  \onehalfspacing %
    % Insert the text.
    \insertabstract %
-  \end{minipage} %
- \end{center} %
  % Vertical rubber space
  \vspace*{\stretch{1}} %
 }
@@ -1304,28 +1119,27 @@
  \@tex@bibliography{#1} %
 }
 
-
-%% ---- CODE ENVIRONMENT -----------------------------------------------
-% This generates a 'code' environment that allows inline citations
-% of small snippets of code.
-\newenvironment{code} %
- {\quote\small\verbatim} %
- {\endverbatim\endquote}
-
-% Formatting commands
-% This command is used for names of files
-\newcommand{\tfile}[1]{{\footnotesize\textsf{#1}}}
-% This command puts a box around text that is meant for menu entries.
-\newcommand{\tmenu}[1]{\framebox[\width]{\ {\tiny\textsf{#1}}\ }}
-% This command is intended for names of variables within programs.
-\newcommand{\tvar}[1]{{\footnotesize\texttt{#1}}}
-% This command is used to display the contents of strings.
-% It automatically adds the correct, upright quotes around the argument.
-\newcommand{\tstring}[1]{ %
- {\footnotesize\texttt{\textquotesingle#1\textquotesingle}}}
-% This command gives a bold version of the variable names.
-\newcommand{\tfunction}[1]{{\footnotesize\texttt{\textbf{#1}}}}
-
+% Create a new command for printing the bibliography with biblatex
+\newcommand*{\bibsection}{ %
+ % Update the page format.
+ \if@umich@report %
+  % Eliminate vertical space.
+  \ \\[-2ex] %
+ \else %
+  % Switch to single spacing
+  \singlespacing %
+ \fi %
+ % Move to new page.
+ \clearpage %
+ % Create a pdf anchor.
+ \phantomsection %
+ % Add to table of contents.
+ \addcontentsline{toc}{chapter}{Bibliography} %
+ \begin{minipage}{0.8\textwidth} \vspace{1in} \end{minipage} \\ %
+ \center{\bfseries BIBLIOGRAPHY}
+ % Load the bibliography.
+ \printbibliography[heading=none] %
+}
 
 
 %% ---- CHAPTER HEADINGS -----------------------------------------------
@@ -1344,31 +1158,37 @@
   % Check for chapter overflow.
   \ifnum \c@secnumdepth >\m@ne %
    % CHAPTER and number
-   \centerline{\Large\bf \@chapapp{} \thechapter} \par %
+   \centerline{\large\bf \@chapapp{} \thechapter} \par %
    % Vertical space
    \vskip 0.3in \fi %
    % Insert the title of the chapter.
-   \begin{center} \LARGE\bf #1 \end{center} %
+   \begin{center} \large\bf #1 \end{center} %
    % Vertical space after the title
    \nobreak \vskip 0.3in %
  } %
 }
 
+%% ---- SECTION HEADINGS -----------------------------------------------
+\RequirePackage{titlesec}
+
+\titleformat*{\section}{\center\bfseries}
+\titleformat*{\subsection}{\bfseries}
+\titleformat*{\subsubsection}{\bfseries}
 
 
 %% ---- LINKS ----------------------------------------------------------
 % This loads a package that allows extra colors for links.
-\RequirePackage[usenames,dvipsnames]{color}
+\RequirePackage[usenames,dvipsnames]{xcolor}
 % Custom color for references.
 \definecolor{DarkGreen}{rgb}{0,0.6,0}
 
 % This will make labels and references hyperlinks.
 \if@umich@backref
  % Use references in the bibliography.
- \RequirePackage[pagebackref=true]{hyperref}
+ \RequirePackage[pagebackref=true,pdfencoding=auto]{hyperref}
 \else
  % Do not use back references.
- \RequirePackage{hyperref}
+\RequirePackage[pdfencoding=auto]{hyperref}
 \fi
 
 % This controls some settings that affect the appearance of links.
@@ -1377,9 +1197,9 @@
  \hypersetup{ %
   colorlinks=true, %
   pdfstartview={FitH}, %
-  citecolor=DarkGreen, %
+  citecolor=Black, %
   linkcolor=Black, %
-  urlcolor=Blue %
+  urlcolor=Black %
  }
 \else
  % Use maroon for the main links.
@@ -1399,18 +1219,18 @@
  % Insert a title page.
  \titlepage %
  % Change the PDF title.
- \hypersetup{pdftitle=\inserttitle} %
+ \hypersetup{pdftitle={\inserttitle},pdfauthor={\insertauthor}}
  % Insert the frontispiece if there is one.
  \if@umich@frontispiece\frontispiecepage\fi %
 % \ifthenelse{\equal{\@frontispiece}{}}{}{\frontispiecepage} %
- % Initialize page numbers.
- \setcounter{page}{1} %
  % Page numbers at the bottom
  \pagestyle{plain} %
  % Use lower-case roman numerals.
  \renewcommand{\thepage}{\roman{page}} %
  % Insert the copyright page if there is one.
  \if@umich@copyright\copyrightpage\fi
+ % Initialize page numbers.
+ \setcounter{page}{1} %
  % Insert a dedication if there is one.
  \if@umich@dedication\dedicationpage\fi %
  % Insert the acknowledgments if there are any.
@@ -1431,8 +1251,6 @@
  \if@umich@listofmaps\listofmaps\fi %
  % Insert the list of illustrations.
  \if@umich@listofillustrations\listofillustrations\fi %
- % Insert the list of programs.
- \if@umich@listofprograms\listofprograms\fi %
  % Insert the list of appendices.
  \if@umich@listofappendices\listofappendices\fi %
  % Insert the list of abbreviations.

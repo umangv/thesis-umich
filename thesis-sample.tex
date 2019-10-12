@@ -1,0 +1,113 @@
+\documentclass[thesis]{thesis-umich}
+
+\title{\LaTeX\ Template for Rackham Dissertations}
+
+% Author name
+\author{Jane R. Doe}
+\authoremail{jdoe@umich.edu}
+\orcidid{9999-9999-9999-9999}
+
+% Department
+\department{Mathematics}
+
+% Year of completion
+\year=2019
+
+\dedication{
+  This manual is dedicated to all doctoral students at the University of
+  Michigan's Horace H. Rackham School of Graduate Studies.
+}
+
+\acknowledgments{
+  This template has been modified by a lot of people over the years. To the best of my knowledge, it's original version was written by Jin Ji in 1988. Modifications to it have since been made by Roque D.\ Oliveira in 1992, Jason Gilbert  in 2008, Derek Dalle in 2011, and Umang Varma in 2019. It is possible that other people have modified this document (in fact, there is a unattributed change in the changelog dated 1989.11.29).
+}
+
+\preface{
+  This disseration is a sample document using the \texttt{thesis-umich.cls}
+  template.
+}
+
+\committee{
+  Professor John D. Brown, Co-Chair,\\
+  Professor Emeritus Ann A. Smith, Co-Chair\\
+  Dr. Alicia Gonzalez, Mellon Foundation\\
+  Assistant Professor Charles Z. Jones\\
+  Associate Professor Kathleen X. Lee, Yale University\\
+  Associate Professor Horace H. Rackham
+}
+
+% Commands to hide or show lists of figures, tables, etc.
+%\showlistoffigures
+%\showlistoftables
+%\showlistofmaps
+%\showlistofillustrations
+\showlistofappendices
+%\showlistofabbreviations
+%\showlistofacronyms
+%\showlistofsymbos
+% OR
+\hidelistoffigures
+\hidelistoftables
+\hidelistofmaps
+\hidelistofillustrations
+%\hidelistofappendices
+\hidelistofabbreviations
+\hidelistofacronyms
+\hidelistofsymbols
+
+% Definition of any abbreviations used.
+%\abbreviations{
+% \acro{LS&A}{Literature Science and Arts}
+%}
+
+% Some abstract text
+\abstract{
+  With walk through basic steps of using this \LaTeX\ template.
+}
+
+\begin{document}
+
+\chapter{Using This Template}
+The approach to this template is to result in \LaTeX~source files (i.e.,
+\texttt{.tex} files) that are as simple as possible.  This is particularly
+useful for the first few pages, for example the title page, dedication, and
+abstract page, which are difficult to make in \LaTeX~and are supposed to go in
+a certain order.
+
+You are welcome to modify \texttt{thesis-umich.cls} to suit your needs or keep
+up with modifications to Rackham guidelines. I used this template to submit my
+dissertation in 2019, but Rackham can change their rules at any time. If you
+have not modified a \texttt{.cls} file before, but know how to define commands
+in \TeX, you should not have much trouble, apart from the sneaky \verb=@=
+character, which behaves like a letter in \texttt{.cls} files but not in
+\texttt{.tex} (see \href{https://tex.stackexchange.com/q/8351/21027}{``What do
+  \texttt{\textbackslash makeatletter} and \texttt{\textbackslash makeatother}
+do?'' on \TeX\ StackOverflow} and
+\href{https://tug.org/pipermail/tugindia/2002-January/000178.html}{``Makeatletter
+and Makeatother'' on the \TeX\ Users Group} for more information).
+
+Finally, you should be able to use your preferred bibliography manager (BibTex, BibLaTeX, NatBib, etc.). If the \texttt{\textbackslash bibliography} command is giving you trouble, look in \texttt{thesis-umich.cls}, because it was modified there. You can also look at that code for help with formatting bibliographies that are displayed with other commands.
+
+
+
+\appendix
+\chapter{Example Appendix}
+
+\section{Lists Including the Appendices}
+The command
+\begin{verbatim}
+\showlistofappendices
+\end{verbatim}
+must appear in the preamble if there are more than one appendices.  For
+some reason, Rackham does not want the individual appendices and their
+sections to appear in the Table of Contents, so a special List of
+Appendices page (which must occur in the Table of Contents!) is required
+as a sort of extension to the Table of Contents.
+
+\nocite{*}
+
+
+\bibliographystyle{alpha}
+\bibliography{thesis-bib}
+
+\end{document}
