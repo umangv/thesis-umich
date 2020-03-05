@@ -879,7 +879,7 @@
  % Add the page to the table of contents.
  \addcontentsline{toc}{chapter}{Appendices}
  % Stop adding sections to the table of contents.
- \addtocontents{toc}{\setcounter{tocdepth}{1}} %
+ \addtocontents{toc}{\protect\setcounter{tocdepth}{1}} %
  % Header for appendices.
  \renewcommand{\@chapapp}{APPENDIX} %
  % Renew the chapter and section labels.
